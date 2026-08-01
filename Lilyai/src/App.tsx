@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShieldAlert, ShieldCheck, Cpu, Send, 
-  Search, AlertTriangle, Key, Globe, Sparkles, RefreshCw
+  Search, AlertTriangle, Key, Globe, Sparkles, RefreshCw, LucideIcon 
 } from 'lucide-react';
 
 interface Message {
@@ -59,12 +59,17 @@ export default function App() {
   // Password Strength Logic
   const evalPassword = (val: string) => {
     setPassword(val);
+    if (!val) {
+      setPassStrength(0);
+      return;
+    }
     let score = 0;
-    if (val.length > 8) score += 25;
-    if (/[A-Z]/.test(val)) score += 25;
-    if (/[0-9]/.test(val)) score += 25;
-    if (/[^A-Za-z0-9]/.test(val)) score += 25;
-    setPassStrength(score);
+    if (val.length >= 8) score += 25;
+    if (val.length >= 12) score += 15;
+    if (/[A-Z]/.test(val)) score += 20;
+    if (/[0-9]/.test(val)) score += 20;
+    if (/[^A-Za-z0-9]/.test(val)) score += 20;
+    setPassStrength(Math.min(100, score));
   };
 
   // Simulated Chat Logic
@@ -124,7 +129,7 @@ export default function App() {
     }, 1800);
   };
 
-  const NavButton = ({ id, label, icon: Icon }: { id: 'chat' | 'scanner'; label: string; icon: any }) => {
+  const NavButton = ({ id, label, icon: Icon }: { id: 'chat' | 'scanner'; label: string; icon: LucideIcon }) => {
     const isActive = activeTab === id;
     return (
       <button
@@ -151,11 +156,11 @@ export default function App() {
   };
 
   return (
-    <main className="min-h-screen w-screen bg-[#050816] text-slate-100 font-sans overflow-hidden relative cursor-none">
+    <main className="min-h-screen w-screen bg-[#050816] text-slate-100 font-sans overflow-hidden relative lg:cursor-none">
       
       {/* CUSTOM MORION AI GLOW CURSOR */}
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full border-2 border-[#00E5FF] pointer-events-none z-50 mix-blend-screen shadow-neon-cyan"
+        className="fixed top-0 left-0 w-8 h-8 rounded-full border-2 border-[#00E5FF] pointer-events-none z-50 mix-blend-screen shadow-neon-cyan hidden lg:block"
         animate={{
           x: cursorPos.x - 16,
           y: cursorPos.y - 16,
@@ -165,7 +170,7 @@ export default function App() {
         transition={{ type: "spring", stiffness: 700, damping: 28, mass: 0.1 }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-2 h-2 rounded-full bg-[#00E5FF] pointer-events-none z-50 shadow-neon-cyan"
+        className="fixed top-0 left-0 w-2 h-2 rounded-full bg-[#00E5FF] pointer-events-none z-50 shadow-neon-cyan hidden lg:block"
         animate={{ x: cursorPos.x - 4, y: cursorPos.y - 4 }}
         transition={{ type: "spring", stiffness: 1000, damping: 50 }}
       />
@@ -179,11 +184,11 @@ export default function App() {
       <div className="flex flex-col h-screen w-full max-w-[1800px] mx-auto p-4 md:p-6 relative z-10">
         
         {/* HEADER */}
-        <header className="flex items-center justify-between backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl px-6 py-3 mb-4 shadow-lg">
+        <header className="flex items-center justify-between backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl px-6 py-3 mb-4 shadow-lg shrink-0">
           <div className="flex items-center gap-3">
             <motion.div 
               className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#00E5FF] to-[#7C3AED] flex items-center justify-center shadow-neon-cyan"
-              animate={{ rotate:[0, 5, 0, -5, 0] }}
+              animate={{ rotate: [0, 5, 0, -5, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             >
               <ShieldCheck className="w-5 h-5 text-black" />
@@ -213,10 +218,10 @@ export default function App() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
           
           {/* SIDEBAR TOOLS */}
-          <aside className="lg:col-span-3 flex flex-col gap-4 overflow-y-auto pr-1">
+          <aside className={`lg:col-span-3 flex-col gap-4 overflow-y-auto pr-1 ${activeTab === 'scanner' ? 'flex' : 'hidden lg:flex'}`}>
             
             {/* AVATAR CARD */}
-            <div className="backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col items-center text-center relative overflow-hidden group">
+            <div className="backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col items-center text-center relative overflow-hidden group shrink-0">
               <div className="absolute inset-0 bg-gradient-to-b from-[#00E5FF]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               <div className="relative mb-4">
                 <div className="w-20 h-20 rounded-full border-2 border-[#00E5FF]/30 p-1.5 shadow-neon-cyan/20 relative">
@@ -245,7 +250,7 @@ export default function App() {
             </div>
 
             {/* PASSWORD AUDITOR TOOL */}
-            <div className="backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
+            <div className="backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl p-4 shrink-0">
               <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-slate-300">
                 <Key className="w-4 h-4 text-[#00E5FF]" />
                 Password Auditor
@@ -274,7 +279,7 @@ export default function App() {
             </div>
 
             {/* URL INSPECTOR TOOL */}
-            <div className="backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
+            <div className="backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl p-4 shrink-0">
               <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-slate-300">
                 <Globe className="w-4 h-4 text-[#7C3AED]" />
                 URL Safety Inspector
@@ -291,6 +296,7 @@ export default function App() {
                 />
                 <button
                   onClick={() => {
+                    if (!urlInput.trim()) return;
                     setUrlStatus('scanning');
                     setTimeout(() => setUrlStatus(urlInput.includes('.xyz') ? 'danger' : 'safe'), 1500);
                   }}
@@ -314,7 +320,7 @@ export default function App() {
           </aside>
 
           {/* CHAT INTERFACE */}
-          <section className="lg:col-span-9 flex flex-col backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden relative">
+          <section className={`lg:col-span-9 flex-col backdrop-blur-md bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden relative ${activeTab === 'chat' ? 'flex' : 'hidden lg:flex'}`}>
             
             <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
               <AnimatePresence>
@@ -383,7 +389,7 @@ export default function App() {
             </div>
 
             {/* INPUT PANEL */}
-            <div className="p-4 bg-slate-950/80 border-t border-slate-800">
+            <div className="p-4 bg-slate-950/80 border-t border-slate-800 shrink-0">
               <form onSubmit={handleSendMessage} className="flex items-center gap-3">
                 <input
                   type="text"
