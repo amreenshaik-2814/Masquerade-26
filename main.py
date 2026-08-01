@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware  # 1. Added import
 from pydantic import BaseModel
 from google import genai
 from google.genai import types
@@ -7,6 +8,15 @@ from google.genai import types
 app = FastAPI(
     title="Masquerade '26 Chatbot API",
     description="Backend API for MASQUERADE '26 competition judging"
+)
+
+# 2. Added CORS middleware to allow browser requests from any frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Fetch API key securely from environment variable
