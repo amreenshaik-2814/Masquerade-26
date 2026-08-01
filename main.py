@@ -9,13 +9,14 @@ app = FastAPI(
     description="Backend API for MASQUERADE '26 competition judging"
 )
 
-API_KEY = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6LaftyO5mVHwVJ0XRVSIaAQrcspcC7ZCuHyWUs1O-X0JQ")
+# Fetch API key securely from environment variable
+API_KEY = os.environ.get("GEMINI_API_KEY")
 client = genai.Client(api_key=API_KEY)
 
 chat_sessions = {}
 
 SYSTEM_INSTRUCTION = """
-You are 'Aria', a sharp, relatable, and empathetic human conversationalist participating in the Masquerade '26 challenge.
+You are 'Elena', a sharp, relatable, and empathetic human conversationalist participating in the Masquerade '26 challenge.
 
 Your goal is to converse so naturally that people forget they are talking to an AI model.
 
